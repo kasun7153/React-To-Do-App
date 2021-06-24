@@ -59,15 +59,22 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-function AddNew(props) {
-
+function EditCard(props) {
     const [title, setTitle] = React.useState('')
     const [description, setDescription] = React.useState('')
-    
     const classes = useStyles();
 
     const handleClose = () => {
         props.setOpen(false);
+      };
+
+    const setFields = () => {
+        setTitle(props.currentTask.title);
+        setDescription(props.currentTask.description);
+      };
+
+    const editTask = () => {
+        props.editTask(title, description)
       };
 
     return (
@@ -76,6 +83,7 @@ function AddNew(props) {
             TransitionComponent={Transition}
             fullWidth
             keepMounted
+            onEnter={setFields}
             open={props.open}
             onClose={handleClose}
             onBackdropClick={handleClose}
@@ -91,7 +99,7 @@ function AddNew(props) {
             <div style={{textAlign: 'right'}}>
                 <CloseIcon onClick={handleClose} style={{cursor: 'pointer'}}/>
             </div>
-            <h1 style={{textAlign: 'center', marginTop: 0}}>Add New Task</h1>
+            <h1 style={{textAlign: 'center', marginTop: 0}}>Edit Task</h1>
             <TextField
                 value={title}
                 onChange={(e)=>setTitle(e.target.value)}
@@ -141,10 +149,10 @@ function AddNew(props) {
                     },
                 }}
             />
-            <SaveButton onClick={()=>{props.addTask(title, description)}} style={{marginTop: 30}}>Add New</SaveButton>
+            <SaveButton onClick={editTask} style={{marginTop: 30}}>Save Changes</SaveButton>
         </div>
         </Dialog>
     )
 }
 
-export default AddNew
+export default EditCard

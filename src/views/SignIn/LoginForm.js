@@ -4,6 +4,9 @@ import TextField from '@material-ui/core/TextField';
 import { useHistory } from "react-router-dom";
 import {withStyles, makeStyles} from '@material-ui/core';
 import Zoom from 'react-reveal/Zoom';
+import createRequest from '../../utils/axios';
+import CustomSnackbar from '../SnackBar/SnackBar';
+import {CircularProgress} from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
     labelRoot: {
@@ -57,9 +60,30 @@ const CssTextField = withStyles({
 function LoginForm() {
     const classes = useStyles();
     let history = useHistory();
-    const submit = ()=>{
-        history.push("/home")
+    const [email, setEmail] = React.useState('')
+    const [password, setPassword] = React.useState('')
+    const [error, setError] = React.useState('')
+    const [loading, setLoading] = React.useState(false)
+
+    const login = async ()=>{
+        const Axios = createRequest()
+        setLoading(true);
+        try {
+            const res = await Axios.post('user/login',{email,password})
+            if (res.status===200) {
+                localStorage.setItem('idToken',res.data.token)
+                console.log('login success')
+            }
+            setLoading(false);
+            console.log(res);
+            history.push("/home")
+        } catch (error) {
+            setLoading(false);
+            console.log(error.response.data.message);
+            setError(error.response.data.message)
+        }
     }
+
     return (
         
         <div>
@@ -68,6 +92,8 @@ function LoginForm() {
                         <div style={{width:'100%'}}>
                             <CssTextField
                             style={{width:'100%'}}
+                            value={email}
+                            onChange={(e)=>setEmail(e.target.value)}
                             // error={error}
                             id="outlined-error-helper-text"
                             required
@@ -96,6 +122,8 @@ function LoginForm() {
                             <CssTextField
                             fullWidth
                             // error={error}
+                            value={password}
+                            onChange={(e)=>setPassword(e.target.value)}
                             id="outlined-error-helper-text"
                             required
                             label="Password"
@@ -122,10 +150,17 @@ function LoginForm() {
                         </div>
                     </div>
                         
-                    <div style={{textAlign:"center"}}>
-                        <div className={styles.btn1} onClick={submit}>Login</div>
+                    <div style={{textAlign:"center"}}> 
+                        {loading ? <CircularProgress style={{'color': 'yellow'}} size={50}/>:<div className={styles.btn1} onClick={login}>Login</div>}
                     </div>
                     </Zoom>
+                    <CustomSnackbar
+                        open={error !== ''}
+                        onClose={()=>setError('')}
+                        state={'error'}
+                        message={error}
+                        duration={2000}
+                    />
                     </div>
     )
 }

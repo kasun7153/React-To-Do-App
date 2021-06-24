@@ -14,23 +14,24 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-function Header() {
+function Header({currentUser,setSearchText,searchText}) {
     const classes = useStyles();
     let history = useHistory();
     const logOut = () => {
+      localStorage.removeItem('idToken')
       history.push("/login")
     }
     return (
        <>
        <div style={{width: '100%'}}>
          <h1 style={{"color":"white", paddingLeft: 40}}>
-            Hello User !
+         {!currentUser.name?'Loading ...' : `Hello ${currentUser.name}`}
           </h1>
         </div>
 
         <div className={styles.searchComponent}>
             <div>
-                <input className={styles.searchInput}  placeholder="Search"/>
+                <input value={searchText} onChange={e=>setSearchText(e.target.value)} className={styles.searchInput}  placeholder="Search"/>
             </div>
            <div className={styles.iconStyle} style={{position:"absolute"}}>
                 <SearchIcon fontSize="large"/>
@@ -41,7 +42,7 @@ function Header() {
             {(popupState) => (
             <div>
                 <div className={styles.avatarDiv}> 
-                  <Avatar {...bindTrigger(popupState)} className={classes.large} src="/broken-image.jpg" style={{background:"#ff5722",cursor:"pointer"}}>K</Avatar>
+                  <Avatar {...bindTrigger(popupState)} className={classes.large} src="/broken-image.jpg" style={{background:"#ff5722",cursor:"pointer"}}>{!currentUser.name?'' : `${currentUser.name.substring(0,1)}`}</Avatar>
                 </div>
 
               <Popover
@@ -66,11 +67,7 @@ function Header() {
             </div>
           )}
         </PopupState>
-
-
-     </>
-        
-        
+     </>  
     )
 }
 
