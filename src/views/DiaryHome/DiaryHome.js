@@ -151,7 +151,7 @@ function DiaryHome() {
                     {cards.map((card,index)=>{
                         return(
                             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>        
-                                <DiaryCard setDeleteDialog={setDeleteDialog} setEditDialog={setEditDialog} setCurrentTask={setCurrentTask} editAccess={currentUser._id===card.user._id?true:false} card={card} bgColor="gray"/>
+                                <DiaryCard setDeleteDialog={setDeleteDialog} setEditDialog={setEditDialog} setCurrentTask={setCurrentTask} editAccess={currentUser.type==='admin'?true:currentUser._id===card.user._id?true:false} card={card} bgColor="gray"/>
                             </Grid>
                             
                         )
